@@ -80,18 +80,18 @@ create table item_venda(
 	primary key (codpro, numven)
 )
 
-
-insert into motorista (codMot,cpf, cnh, nome, endereco) 
-values (1,12345, 54321, 'zé da MANGA', 'rua da manga' ),
-		(2,26526,02638,'han oruam', 'rio de januario'),
-		(3, 89348, 23348, 'jayson', 'paraiba')
+-- inserir dados
+insert into motorista (cpf, cnh, nome, endereco) values 
+		(12345, 54321, 'zé da MANGA', 'rua da manga' ),
+		(26526,02638,'han oruam', 'rio de januario'),
+		( 89348, 23348, 'jayson', 'paraiba')
 
 
 
 insert into Motorista (cpf, cnh, nome, endereco) values 
-(12345678901, 9876543210, 'zé da MANGA', 'Rua das Flores, 10'),
-(23456789012, 8765432109, 'Maria Souza', 'Av. Central, 500'),
-(34567890123, 7654321098, 'Carlos Lima', 'Rua B, 123');
+(12345678, 9876543, 'zé da MANGA', 'Rua das Flores, 10'),
+(23456789, 8765432, 'Maria Souza', 'Av. Central, 500'),
+(34567890, 7654321, 'Carlos Lima', 'Rua B, 123');
 
 
 insert into Veiculo (Placa, Capacidade) values 
@@ -101,15 +101,15 @@ insert into Veiculo (Placa, Capacidade) values
 
 
 insert into Vendedor (CPF, V_comissao, Nome, Endereco) values 
-(45678901234, 5.50, 'Roberto Dias', 'Rua dos Vendedores, 1'),
-(56789012345, 4.00, 'Ana Paula', 'Av. Comercial, 100'),
-(67890123456, 6.20, 'Marcos Paulo', 'Rua da Loja, 99');
+(4567890, 5.50, 'Roberto Dias', 'Rua dos Vendedores, 1'),
+(5678901, 4.00, 'Ana Paula', 'Av. Comercial, 100'),
+(6789012, 6.20, 'Marcos Paulo', 'Rua da Loja, 99');
 
 
 insert into Cliente (Nome, Tel, Endereco, CPF, Email) values 
-('Lucas Oliveira', '1199998888', 'Rua dos Clientes, 12', 78901234567, 'lucas@email.com'),
-('Fernanda Costa', '2188887777', 'Alameda Santos, 45', 89012345678, 'fer@email.com'),
-('Ricardo Santos', '3177776666', 'Praça da Liberdade, 5', 90123456789, 'ricardo@email.com');
+('Lucas Oliveira', '1199998888', 'Rua dos Clientes, 12', 78901234, 'lucas@email.com'),
+('Fernanda Costa', '2188887777', 'Alameda Santos, 45', 89012345, 'fer@email.com'),
+('Ricardo Santos', '3177776666', 'Praça da Liberdade, 5', 90123456, 'ricardo@email.com');
 
 
 insert into Produto (custo, descricao, preco, nome) values 
@@ -136,7 +136,7 @@ insert into Entrega (hora, data, numven, placa, codMot) values
 
 
 select * from Veiculo
-
+-- atualizar dados
 update Produto 
 set preco = 150.00 
 where codpro = 2;
@@ -146,94 +146,96 @@ set endereco = 'Nova Rua do Comércio, 200',
     v_comissao = 7.50
 where codvdd = 1;
 
-DELETE FROM Motorista 
-WHERE codMot = 1;
+-- deletar dados
+delete from Motorista 
+where codMot = 1;
 
-DELETE FROM Veiculo 
-WHERE placa = 'ABC1D23';
+delete from Veiculo 
+where placa = 'ABC1D23';
 
--- Obter o nome e o preço dos produtos, renomeando a coluna de preço
+
+-- Obter o nome e o preço dos produtos, renomear a coluna de preço
 select nome, preco as valor_venda 
 from Produto;
 
--- Listar as diferentes capacidades de veículos cadastradas
+-- diferentes capacidades de veículos cadastradas
 select distinct capacidade 
 from Veiculo;
 
--- Listar produtos do mais caro para o mais barato 
-SELECT nome, preco 
-FROM Produto 
-ORDER BY preco DESC;
+--  produtos do mais caro para o mais barato 
+select nome, preco 
+from Produto 
+order by preco desc;
 
 -- quantidade de vendas por vendedor
-SELECT codvdd, COUNT(*) as total_vendas
-FROM Venda
-GROUP BY codvdd
-HAVING COUNT(*) > 1;
+select codvdd, COUNT(*) as total_vendas
+from Venda
+group by codvdd
+HAVING COUNT(*) > 2;
 
--- Obter o total de vendas (soma), a maior venda e a média de valores [cite: 238]
+--total de vendas, a maior venda e a média de valores
 select SUM(valor_total), MAX(valor_total), AVG(valor_total) 
 from Venda;
 
--- Produtos com preço entre 100 e 600 reais
-SELECT nome, preco 
-FROM Produto 
-WHERE preco BETWEEN 100 AND 600;
+-- produtos com preço entre 100 e 600 reais
+select nome, preco 
+from Produto 
+where preco BETWEEN 100 AND 600;
 
--- Clientes cujo nome começa com 'Maria' [cite: 133]
-SELECT nome 
-FROM Cliente 
-WHERE nome LIKE 'Maria%'; 
+-- clientes que o nome começa com 'Maria' 
+select nome 
+from Cliente 
+where nome LIKE 'Maria%'; 
 
 -- Vendas realizadas pelos vendedores de código 1 ou 3
-SELECT * FROM Venda 
-WHERE codvdd IN (1, 3);
+select * from Venda 
+where codvdd IN (1, 3);
 
--- Listar o número da venda e o nome do cliente que a realizou
-SELECT v.numven, c.nome
-FROM Venda v, Cliente c
-WHERE v.codclient = c.codclient;
+-- número da venda e o nome do cliente que a realizou
+select v.numven, c.nome
+from Venda v, Cliente c
+where v.codclient = c.codclient;
 
--- Selecionar todos os clientes que já realizaram pelo menos uma venda.
-SELECT * FROM Cliente 
-WHERE codclient IN (SELECT codclient FROM Venda);
+-- todos os clientes que já realizaram pelo menos uma venda.
+select * from Cliente 
+where codclient IN (select codclient from Venda);
 
---Selecionar todos os vendedores que possuem uma comissão maior que a do vendedor 'Ana Paula'.
-SELECT p.* FROM Produto p 
-WHERE EXISTS (SELECT 1 FROM item_venda iv WHERE iv.codpro = p.codpro);
+-- todos os vendedores que possuem uma comissão maior que a do vendedor 'Ana Paula'.
+select p.* from Produto p 
+where exists (select 1 from item_venda iv where iv.codpro = p.codpro);
 
--- Usando NOT IN
-SELECT * FROM Veiculo 
-WHERE placa NOT IN (SELECT placa FROM Entrega);
+--  NOT IN
+select * from Veiculo 
+where placa NOT IN (select placa from Entrega);
 
--- Usando NOT EXISTS
-SELECT * FROM Veiculo v 
-WHERE NOT EXISTS (SELECT 1 FROM Entrega e WHERE e.placa = v.placa);
+--  NOT exists
+select * from Veiculo v 
+where NOT exists (select 1 from Entrega e where e.placa = v.placa);
 
--- Lista o número da venda, o valor e o nome do vendedor que a realizou
-SELECT v.numven, v.valor_total, vend.nome AS nome_vendedor
-FROM Venda v
+-- INNER JOINH número da venda o valor e o nome do vendedor 
+select v.numven, v.valor_total, vend.nome as nome_vendedor
+from Venda v
 INNER JOIN Vendedor vend ON v.codvdd = vend.codvdd;
 
--- LEFT JOIN listar todos os clientes da sua base, inclusive aqueles que ainda não realizaram nenhuma compra
-SELECT 
-    c.nome AS cliente, 
-    v.numven AS codigo_venda, 
+-- LEFT JOIN todos os clientes e suas venddas
+select 
+    c.nome as cliente, 
+    v.numven as codigo_venda, 
     v.valor_total
-FROM Cliente c
+from Cliente c
 LEFT JOIN Venda v ON c.codclient = v.codclient
 ORDER BY c.nome;
 
--- Todos os Clientes e suas Vendas
-SELECT 
-    v.numven AS codigo_venda, 
-    c.nome AS nome_cliente
-FROM Venda v 
+-- todos os Clientes e suas Vendas
+select 
+    v.numven as codigo_venda, 
+    c.nome as nome_cliente
+from Venda v 
 RIGHT JOIN Cliente c ON v.codclient = c.codclient;
 
--- Clientes e Vendas
-SELECT 
-    c.nome AS cliente, 
-    v.numven AS codigo_venda
-FROM Cliente c
-FULL OUTER JOIN Venda v ON c.codclient = v.codclient;
+-- clientes e Vendas
+select 
+    c.nome as cliente, 
+    v.numven as codigo_venda
+from Cliente c
+FULL JOIN Venda v ON c.codclient = v.codclient;
