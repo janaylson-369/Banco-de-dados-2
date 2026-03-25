@@ -200,7 +200,11 @@ where v.codclient = c.codclient;
 select * from Cliente 
 where codclient IN (select codclient from Venda);
 
--- todos os vendedores que possuem uma comissão maior que a do vendedor 'Ana Paula'.
+-- todos os vendedores que temm uma comissão maior que a da vendedor 'Ana Paula'.
+SELECT * FROM Vendedor 
+WHERE v_comissao > (SELECT v_comissao FROM Vendedor WHERE nome = 'Ana Paula');
+
+-- 
 select p.* from Produto p 
 where exists (select 1 from item_venda iv where iv.codpro = p.codpro);
 
