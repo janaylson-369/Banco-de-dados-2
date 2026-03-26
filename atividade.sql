@@ -22,6 +22,15 @@ create table Motorista (
 	
 	
 );
+create table Motorista (
+	codMot serial primary key,
+	cpf numeric(11),
+	cnh numeric(10),
+	nome varchar(50) ,
+	endereco varchar(100)
+	
+	
+);
 
 create table Entrega (
 	hora time,
@@ -110,8 +119,6 @@ insert into Cliente (Nome, Tel, Endereco, CPF, Email) values
 ('Lucas Oliveira', '1199998888', 'Rua dos Clientes, 12', 78901234, 'lucas@email.com'),
 ('Fernanda Costa', '2188887777', 'Alameda Santos, 45', 89012345, 'fer@email.com'),
 ('Ricardo Santos', '3177776666', 'Praça da Liberdade, 5', 90123456, 'ricardo@email.com');
-
-
 insert into Produto (custo, descricao, preco, nome) values 
 (200.00, 'Mesa de Jantar Madeira', 550.00, 'Mesa Luxo'),
 (50.00, 'Cadeira Estofada Preta', 120.00, 'Cadeira Office'),
@@ -154,7 +161,7 @@ delete from Veiculo
 where placa = 'ABC1D23';
 
 
--- Obter o nome e o preço dos produtos, renomear a coluna de preço
+-- Obter o nome e o preço dos produt renomear a coluna de preço
 select nome, preco as valor_venda 
 from Produto;
 
@@ -201,45 +208,59 @@ select * from Cliente
 where codclient IN (select codclient from Venda);
 
 -- todos os vendedores que temm uma comissão maior que a da vendedor 'Ana Paula'.
-SELECT * FROM Vendedor 
-WHERE v_comissao > (SELECT v_comissao FROM Vendedor WHERE nome = 'Ana Paula');
+select * from Vendedor 
+where v_comissao > (SELECT v_comissao FROM Vendedor WHERE nome = 'Ana Paula');
 
--- 
-select p.* from Produto p 
-where exists (select 1 from item_venda iv where iv.codpro = p.codpro);
-
---  NOT IN
-select * from Veiculo 
-where placa NOT IN (select placa from Entrega);
-
---  NOT exists
-select * from Veiculo v 
-where NOT exists (select 1 from Entrega e where e.placa = v.placa);
-
--- INNER JOINH número da venda o valor e o nome do vendedor 
+-- INNER JOINH nmero da venda o valor e o nome do vendedor 
 select v.numven, v.valor_total, vend.nome as nome_vendedor
 from Venda v
 INNER JOIN Vendedor vend ON v.codvdd = vend.codvdd;
 
--- LEFT JOIN todos os clientes e suas venddas
+-- left td os clientes e suas venddas
 select 
     c.nome as cliente, 
     v.numven as codigo_venda, 
     v.valor_total
 from Cliente c
-LEFT JOIN Venda v ON c.codclient = v.codclient
-ORDER BY c.nome;
+left join Venda v ON c.codclient = v.codclient
+order by c.nome desc;
 
--- todos os Clientes e suas Vendas
+--right todos os Cliente e suas Venda
 select 
     v.numven as codigo_venda, 
     c.nome as nome_cliente
 from Venda v 
-RIGHT JOIN Cliente c ON v.codclient = c.codclient;
+right join Cliente c ON v.codclient = c.codclient;
 
--- clientes e Vendas
+-- fullclientes e Vendas
 select 
     c.nome as cliente, 
     v.numven as codigo_venda
 from Cliente c
-FULL JOIN Venda v ON c.codclient = v.codclient;
+full join Venda v ON c.codclient = v.codclient
+order by c.nome desc;
+
+
+
+
+
+
+-- todos os produtos que acabou estoque  
+select p.codpro, p.preco, p.nome, iv.vunitario, iv.qtd 
+from Produto p 
+left join item_venda iv ON p.codpro = iv.codpro
+where not exists (select * from item_venda iv where iv.codpro = p.codpro);
+
+-- todos os produtos que tem estoque 
+select p.codpro, p.preco, p.nome, iv.vunitario, iv.qtd 
+from Produto p 
+inner join item_venda iv ON p.codpro = iv.codpro
+where  exists (select * from item_venda iv where iv.codpro = p.codpro);
+
+-- todos os produtos que tem estoque 
+select p.codpro, p.preco, p.nome, iv.vunitario, iv.qtd 
+from Produto p 
+left join item_venda iv ON p.codpro = iv.codpro
+where exists (select * from item_venda iv where iv.codpro = p.codpro);
+
+
