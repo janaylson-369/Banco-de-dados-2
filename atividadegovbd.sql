@@ -43,23 +43,24 @@ CREATE TABLE bolsa_familia_saques (
 );
 
 CREATE TABLE pe_de_meia (
-    mes_referencia         TEXT,
-    mes_competencia        TEXT,
-    uf                     TEXT,
-    codigo_municipio_siafi TEXT,
-    nome_municipio         TEXT,
-    nis_favorecido         TEXT,
-    cpf_favorecido         TEXT,
-    nome_favorecido        TEXT,
-    valor_pagamento        TEXT,
-    tipo_incentivo         TEXT
-);
-
-CREATE TABLE pe_de_meia (
-    col1 TEXT, col2 TEXT, col3 TEXT, col4 TEXT, col5 TEXT,
-    col6 TEXT, col7 TEXT, col8 TEXT, col9 TEXT, col10 TEXT,
-    col11 TEXT, col12 TEXT, col13 TEXT, col14 TEXT, col15 TEXT,
-    col16 TEXT, col17 TEXT, col18 TEXT
+    mes_referencia          VARCHAR(255), 
+    mes_competencia         VARCHAR(255), 
+    uf                      VARCHAR(255), 
+    codigo_municipio_siafi  VARCHAR(255), 
+    nome_municipio          VARCHAR(255), 
+    nis_favorecido          VARCHAR(255), 
+    cpf_favorecido          VARCHAR(255), 
+    nome_favorecido         VARCHAR(255), 
+    nis_aluno               VARCHAR(255), 
+    cpf_aluno               VARCHAR(255), 
+    nome_aluno              VARCHAR(255),
+    codigo_incentivo_num    VARCHAR(255),
+    tipo_incentivo          VARCHAR(255), 
+    referencia_parcela      VARCHAR(255), 
+    codigo_municipio_ibge   VARCHAR(255), 
+    escolaridade            VARCHAR(255), 
+    data_pagamento          VARCHAR(255), 
+    valor_pagamento         VARCHAR(255)  
 );
 
 select * from pe_de_meia
