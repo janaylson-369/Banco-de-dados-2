@@ -110,7 +110,6 @@ CREATE INDEX idx_bolsa_saques_nis ON bolsa_familia_saques(nis_favorecido);
 
 
 
-
 -- Database: bolsaL
 
 -- DROP DATABASE IF EXISTS "bolsaL";
@@ -125,6 +124,7 @@ CREATE DATABASE "bolsaL"
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
+
 
 	--"MÊS COMPETÊNCIA";"MÊS REFERÊNCIA";"UF";"CÓDIGO MUNICÍPIO SIAFI";"NOME MUNICÍPIO";"CPF FAVORECIDO";"NIS FAVORECIDO";"NOME FAVORECIDO";"VALOR PARCELA"
 
@@ -207,6 +207,8 @@ select count(*) as total_pagamentos from Bolsa_Familia_Pagamentos; --14.233.116 
 select count(*) as total_saques from bolsa_familia_saques; -- 14.060.673 registros
 select count(*) as total_pede_meia from pe_de_meia; -- 542.377 registros
 
+select * from Bolsa_Familia_Pagamentos;
+
 
 select 
     p.Nome_Pessoa, 
@@ -216,7 +218,9 @@ select
 from Bolsa_Familia_Pagamentos p
 join bolsa_familia_saques s ON p.NIS = s.nis_favorecido
 limit 10000;
-
+-- sem indice 00:00:06.719
+-- com 1 indice 00:00:00.147
+-- com 2 indices 00:00:00.762
 
 -- Criando índices nas colunas usadas para o JOIN
 CREATE INDEX idx_pede_meia_nis ON pe_de_meia(nis_favorecido);
@@ -224,4 +228,43 @@ CREATE INDEX idx_bolsa_pagamentos_nis ON Bolsa_Familia_Pagamentos(NIS);
 CREATE INDEX idx_bolsa_saques_nis ON bolsa_familia_saques(nis_favorecido);
 
 -- quanto tempo foi necessário para realizar consulta sem o uso de índices e quanto tempo foi necessário para realizar consulta com o uso de índices.
-drop index idx_bolsa_saques_nis;
+drop index idx_bolsa_pagamentos_nis;
+
+-- ------------------------------------------  sequencias    --------------------------------------------------
+
+
+CREATE SEQUENCE serial START 101;
+
+SELECT nextval('serial');
+
+CREATE SEQUENCE three
+INCREMENT -1
+MINVALUE 1
+MAXVALUE 3
+START 3
+CYCLE;
+
+SELECT nextval('three');
+
+
+CREATE TABLE order_details(
+    order_id SERIAL,
+    item_id INT NOT NULL,
+    item_text VARCHAR NOT NULL,
+    price DEC(10,2) NOT NULL,
+    PRIMARY KEY(order_id, item_id)
+);
+select * from order_details;
+CREATE SEQUENCE order_item_id
+START 10
+INCREMENT 10
+MINVALUE 10
+OWNED BY order_details.item_id;
+
+INSERT INTO
+    order_details(order_id, item_id, item_text, price)
+VALUES
+    (100, nextval('order_item_id'),'DVD Player',100),
+    (100, nextval('order_item_id'),'Android TV',550),
+    (100, nextval('order_item_id'),'Speaker',250);
+	
