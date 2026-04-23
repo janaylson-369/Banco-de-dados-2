@@ -105,7 +105,7 @@ drop sequence distribuidor_id_seq
 --Selecione o próximo valor de cada seqüência criada
 --Apague as sequencias criadas.
 
-
+-- farmacia
 CREATE SEQUENCE order_CNPJ_Farmacia
 START 10000000000000
 MAXVALUE 99999999999999
@@ -121,24 +121,92 @@ create table Farmacia (
 	End_Farmacia varchar(100)
 );
 
-INSERT INTO
-    Farmacia(CNPJ_Farmacia, Nome_Farmacia, Tel_Farmacia, End_Farmacia)
-VALUES
-    (nextval('order_CNPJ_Farmacia'),'DVD Player',1223,'RUA ALAL' ),
-    (nextval('order_CNPJ_Farmacia'),'Android TV',5503,'RUA KFKM'),
-    (nextval('order_CNPJ_Farmacia'),'Speaker',2503,'RUA IDJOSKM');
-
 
 create table Produto (
 	Cod_Produto numeric(14)primary key,
 	Valor_Produto varchar(30),
 	Qtd_Produto numeric(13),
-	CNPJ_Farmacia numeric(14)
+	CNPJ_Farmacia numeric(14) REFERENCES Farmacia(CNPJ_Farmacia)
 );
 
 create table Farmaceutico (
 	RG_Farmaceutico numeric(7)primary key,
 	Nome_Farmaceutico varchar(30),
-	CNPJ_Farmacia numeric(14)
+	CNPJ_Farmacia numeric(14) REFERENCES Farmacia(CNPJ_Farmacia)
 
 );
+
+
+--- sequencias produto e farmaceutico
+CREATE SEQUENCE seq_cod_produto
+START 1
+INCREMENT 1
+OWNED BY Produto.Cod_Produto;
+
+
+CREATE SEQUENCE seq_rg_farmaceutico
+START 1000000
+INCREMENT 1
+OWNED BY Farmaceutico.RG_Farmaceutico;
+
+
+
+
+-- Inserindo/ testes
+
+-- Inserindo farmacia 1
+insert into Farmacia 
+values (nextval('order_CNPJ_Farmacia'), 'Farmácia Centra', 8399999888, 'Rua das Flores, 10');
+
+
+insert into Produto 
+values (nextval('seq_cod_produto'), '25.50', 100, currval('order_CNPJ_Farmacia'));
+
+insert into Farmaceutico
+values (nextval('seq_rg_farmaceutico'), 'Janaylson Dev', currval('order_CNPJ_Farmacia'));
+
+select * from Produto
+
+-- Inserindo farmacia 2
+insert into Farmacia 
+values (nextval('order_CNPJ_Farmacia'), 'Bio Ativ', 8377777666, 'Av. Epitácio Pessoa, 500');
+
+
+insert into Produto 
+values (nextval('seq_cod_produto'), '15.00', 50, currval('order_CNPJ_Farmacia'));
+insert into Farmaceutico 
+values (nextval('seq_rg_farmaceutico'), 'Dr. João Silva', currval('order_CNPJ_Farmacia'));
+
+
+-- testes
+insert into Farmacia(CNPJ_Farmacia, Nome_Farmacia, Tel_Farmacia, End_Farmacia)
+values
+    (nextval('order_CNPJ_Farmacia'),'DVD Player',1223,'RUA ALAL' ),
+    (nextval('order_CNPJ_Farmacia'),'Android TV',5503,'RUA KFKM'),
+    (nextval('order_CNPJ_Farmacia'),'Speaker',2503,'RUA IDJOSKM');
+
+insert into Produto (Cod_Produto, Valor_Produto, Qtd_Produto, CNPJ_Farmacia) values 
+(nextval('seq_cod_produto'), '25.51', 101, currval('order_CNPJ_Farmacia'));
+(nextval('seq_cod_produto'), '15.00', 50, currval('order_CNPJ_Farmacia'));
+
+insert into Farmaceutico (RG_Farmaceutico, Nome_Farmaceutico, CNPJ_Farmacia) values 
+(nextval('seq_rg_farmaceutico'), 'Janaylson Dev', currval('order_CNPJ_Farmacia')),
+(nextval('seq_rg_farmaceutico'), 'Dr. João Silva', currval('order_CNPJ_Farmacia'));
+
+select * from Produto
+
+	
+--- Redefine o valor do contador do objeto de sequência
+ALTER sequence seq_cod_produto restart with 100;
+
+
+---Selecione o próximo valor de cada sequência criada 
+select nextval('order_CNPJ_Farmacia') as prox_cnp;
+select nextval('seq_cod_produto') as prox_cod_produto;
+select nextval('seq_rg_farmaceutico') as prox_rg_farmaceutico;
+
+
+--- Apague as sequencias criadas
+drop sequence order_CNPJ_Farmacia;
+drop sequence seq_cod_produto;
+drop sequence seq_rg_farmaceutico;
